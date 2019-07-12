@@ -28,8 +28,8 @@ import java.util.List;
 public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>{
 
     private static final String TAG = BaseAdapter.class.getSimpleName();
-    public static final int TYPE_BASE = 0x000000;
-    private static final int TYPE_HEADER_VIEW = 0x100000;
+    public static final int TYPE_BASE = 0x100000;
+    private static final int TYPE_HEADER_VIEW = 0x110000;
 
     private MultiItemDelegateManager<T> adapterDelegateManager;
     private LinearLayout mHeaderView;

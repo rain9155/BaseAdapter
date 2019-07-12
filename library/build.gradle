@@ -45,9 +45,9 @@ publish {
     userOrg = "rain9155"
     groupId = "com.jianyu"
     artifactId = 'baseadapter'
-    publishVersion = "1.0.0"
+    publishVersion = "1.0.1"
     desc = "simplify coding of recyclerView'adapter"
-    website = "https://github.com/rain9155/Utils"
+    website = "https://github.com/rain9155/BaseAdapter"
 }
 
 
