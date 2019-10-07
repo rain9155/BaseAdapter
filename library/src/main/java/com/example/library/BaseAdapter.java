@@ -1,6 +1,5 @@
 package com.example.library;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,7 +56,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>{
         mDatas = datas;
         mLayoutId = layoutId;
         adapterDelegateManager = new MultiItemDelegateManager<>();
-        addItemAdapterDelegte(TYPE_BASE, new BaseMultiItemDelegate<>());
+        addItemDelegte(TYPE_BASE, new BaseMultiItemDelegate<>());
     }
 
     protected void onBindView(BaseViewHolder holder, T item){}
@@ -285,7 +284,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>{
      * 添加item的AdapterDelegte，默认viewType
      * @param delegate item的AdapterDelegte
      */
-    public BaseAdapter<T> addItemAdapterDelegte(IMultiItemDelegate<T> delegate){
+    public BaseAdapter<T> addItemDelegte(IMultiItemDelegate<T> delegate){
         adapterDelegateManager.addDelegte(delegate);
         return this;
     }
@@ -295,7 +294,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>{
      * @param viewType item的类型
      * @param delegate item的AdapterDelegte
      */
-    public BaseAdapter<T> addItemAdapterDelegte(int viewType, IMultiItemDelegate<T> delegate){
+    public BaseAdapter<T> addItemDelegte(int viewType, IMultiItemDelegate<T> delegate){
         adapterDelegateManager.addDelegte(viewType, delegate);
         return this;
     }
