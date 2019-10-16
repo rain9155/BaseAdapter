@@ -13,11 +13,13 @@ public class DataAdapter extends BaseAdapter<String>{
 
     public DataAdapter(int layoutId) {
         super(layoutId);
-        addItemDelegte(new MutipleItem2()).addItemDelegte(new MultipleItem1());
+        addItemDelegate(new MutipleItem2()).addItemDelegate(new MultipleItem1());
     }
 
     @Override
     protected void onBindView(BaseViewHolder holder, String item) {
         holder.setText(R.id.tv_text, item);
     }
+
+
 }

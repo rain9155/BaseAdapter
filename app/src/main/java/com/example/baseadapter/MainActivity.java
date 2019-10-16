@@ -10,8 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.baseadapter.adapter.DataAdapter;
-import com.example.library.anim.ScaleAnim;
-import com.example.library.config.AnimType;
+import com.example.library.BaseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         dataAdapter = new DataAdapter(R.layout.item_data);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        dataAdapter.openItemAnimation();
+        dataAdapter.openItemAnim();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(dataAdapter);
+
     }
 
     @Override
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
                 List<String> datas = new ArrayList<>();
                 getDatas(datas);
                 dataAdapter.setDatas(datas);
-                dataAdapter.notifyDataSetChanged();
                 break;
             case R.id.item_add_header:
                 View headerView = LayoutInflater.from(this).inflate(R.layout.header_view, null);
@@ -55,19 +54,19 @@ public class MainActivity extends AppCompatActivity {
                 dataAdapter.removeHeaderView();
                 break;
             case R.id.item_alpha_anim:
-                dataAdapter.changeItemAnimation(AnimType.ALPHA);
+                dataAdapter.changeItemAnim(BaseAdapter.ANIM_ALPHA);
                 break;
             case R.id.item_slide_anim:
-                dataAdapter.changeItemAnimation(AnimType.SLIDE_FROM_LEFT);
+                dataAdapter.changeItemAnim(BaseAdapter.ANIM_SLIDE_FROM_LEFT);
                 break;
             case R.id.item_scale_anim:
-                dataAdapter.changeItemAnimation(AnimType.SCALE);
+                dataAdapter.changeItemAnim(BaseAdapter.ANIM_SCALE);
                 break;
             case R.id.item_close_anim:
-                dataAdapter.closeItemAnimation();
+                dataAdapter.closeItemAnim();
                 break;
             case R.id.item_open_anim:
-                dataAdapter.openItemAnimation();
+                dataAdapter.openItemAnim();
                 break;
             case R.id.item_always_anim:
                 isAlways = !isAlways;
