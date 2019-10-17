@@ -1,7 +1,11 @@
 package com.example.library
 
 import android.support.annotation.IntRange
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +17,9 @@ import com.example.library.anim.ScaleAnim
 import com.example.library.anim.IAnim
 import com.example.library.anim.SlideFormLeftAnim
 import com.example.library.antation.AnimType
-import com.example.library.loadmore.LoadMoreView
-import com.example.library.multiple.BaseDelegate
-import com.example.library.multiple.HeaderDelegate
-import com.example.library.multiple.IMultiItemDelegate
-import com.example.library.multiple.MultiItemDelegateManager
+import com.example.library.loadmore.LoadMoreHelper
+import com.example.library.multiple.*
+import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -31,8 +33,7 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
         private const val LAYOUT_INIT_ID = -1
         const val TYPE_BASE = 0x100000
         const val TYPE_HEADER_VIEW = 0x110000
-        const val TYPE_LOADING_VIEW = 0x111000
-        const val TYPE_EMPTY_VIEW = 0x111100
+        const val TYPE_LOAD_MORE_VIEW = 0x111000
         const val ANIM_ALPHA = 0x000000
         const val ANIM_SCALE = 0x000001
         const val ANIM_SLIDE_FROM_LEFT = 0x000002
@@ -40,18 +41,18 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
 
     private val adapterDelegateManager: MultiItemDelegateManager<T> = MultiItemDelegateManager()
     private var mHeaderView: LinearLayout? = null
-    private var mLoadMoreView: LoadMoreView? = null
+    private var mLoadMoreHelper: LoadMoreHelper? = null
     private var mItemAnim: IAnim? = null
     private var isOpenItemAnim: Boolean = false
     private var mLastItemAnimPosition = -1
-    private var isLoading = false
 
     private val headerViewCount: Int
         get() = if (mHeaderView == null || mHeaderView!!.childCount == 0) 0 else 1
     private val loadMoreViewCount: Int
         get() = if(onLoadMoreListener == null || !isLoadMoreEnable || datas.isEmpty()) 0 else 1
+    private val loadMoreViewPosition: Int
+        get() = headerViewCount + datas.size
 
-    var isLoadMoreEnable = false
     var isAlwaysItemAnim: Boolean = false //设置是否总是加载item动画
     var onItemClickListener: OnItemClickListener? = null
     var onItemLongClickListener: OnItemLongClickListener? = null
@@ -59,9 +60,9 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
     var onItemChildLongListener: OnItemChildLongListener? = null
     var onLoadMoreListener: OnLoadMoreListener? = null
         set(value) {
-            field = value
-            isLoadMoreEnable = true
             isLoading = false
+            isLoadMoreEnable = true
+            field = value
         }
     var layoutId : Int = LAYOUT_INIT_ID
         set(value) {
@@ -74,11 +75,25 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
             field = if(value.isNullOrEmpty()) ArrayList<T> () else value
             notifyDataSetChanged()
         }
+    var isLoadMoreEnable = false
+        set(value) {
+            if(!value){
+                isLoading = false
+                notifyItemRemoved(loadMoreViewPosition)
+            }else{
+                mLoadMoreHelper?.curStatus = LoadMoreHelper.STATUS_LOADING_COMPLETE
+                notifyItemInserted(loadMoreViewPosition)
+            }
+            field = value
+        }
+    var isLoading = false
+        private set
 
     init {
         //type值占位，防止外部添加重复的type值
         addItemDelegate(TYPE_BASE, BaseDelegate())
                 .addItemDelegate(TYPE_HEADER_VIEW, HeaderDelegate())
+                .addItemDelegate(TYPE_LOAD_MORE_VIEW, LoadMoreDelegate())
     }
 
     constructor(datas : MutableList<T>) : this(datas, 0)
@@ -96,9 +111,8 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
                 BaseViewHolder(mHeaderView!!)
             TYPE_BASE ->
                 BaseViewHolder(LayoutInflater.from(parent.context).inflate(layoutId, parent, false))
-            TYPE_LOADING_VIEW ->{
-                BaseViewHolder(getLoadMoreView(parent))
-            }
+            TYPE_LOAD_MORE_VIEW ->
+                BaseViewHolder(getLoadMoreView(parent)!!)
             else ->
                 adapterDelegateManager.onCreateViewHolder(parent, viewType)
         }
@@ -110,11 +124,13 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val viewType = holder.itemViewType
         val dataPosition = getDataPosition(position)
+        onLoadMoreCallback(dataPosition)
         when(viewType){
-            TYPE_HEADER_VIEW ->
+            TYPE_HEADER_VIEW ->{
                 return
-            TYPE_LOADING_VIEW ->{
-
+            }
+            TYPE_LOAD_MORE_VIEW ->{
+                mLoadMoreHelper?.show()
             }
             TYPE_BASE ->{
                 applyItemAnimation(holder.itemView, dataPosition)
@@ -140,19 +156,15 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
             else
                 viewType
         }else{
-            TYPE_LOADING_VIEW
+            TYPE_LOAD_MORE_VIEW
         }
     }
 
     override fun getItemCount(): Int {
-        return if (datas.isEmpty()) headerViewCount else datas.size + headerViewCount
-    }
-
-    private fun getLoadMoreView(parent: ViewGroup): View{
-        if(mLoadMoreView == null){
-            mLoadMoreView = LoadMoreView(parent)
-        }
-        return mLoadMoreView!!.getLoadMoreView()
+        return if (datas.isEmpty())
+            headerViewCount
+        else
+            datas.size + headerViewCount + loadMoreViewCount
     }
 
     private fun bindItemClickListener(holder: BaseViewHolder?) {
@@ -160,10 +172,32 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
         holder.adapter = this
         val itemView = holder.itemView
         itemView.setOnClickListener { v ->
-            onItemClickListener?.onItemClick(this, itemView, getDataPosition(holder.layoutPosition))
+            onItemClickListener?.onItemClick(this, v, getDataPosition(holder.layoutPosition))
         }
         itemView.setOnLongClickListener { v ->
-            onItemLongClickListener?.onItemLongClick(this, itemView, getDataPosition(holder.layoutPosition)) ?: false
+            onItemLongClickListener?.onItemLongClick(this, v, getDataPosition(holder.layoutPosition)) ?: false
+        }
+    }
+
+
+    private fun getLoadMoreView(parent: ViewGroup): View?{
+        if(mLoadMoreHelper == null){
+            mLoadMoreHelper = LoadMoreHelper(parent)
+        }else{
+            mLoadMoreHelper?.updateLoadMoreView(parent)
+        }
+        val loadMoreView = mLoadMoreHelper?.loadMoreView
+        isLoading = false
+        return loadMoreView
+    }
+
+    private fun onLoadMoreCallback(dataPos: Int){
+        if(loadMoreViewCount < 0) return
+        if(dataPos < datas.size) return
+        if(mLoadMoreHelper?.curStatus == LoadMoreHelper.STATUS_LOADING_COMPLETE){
+            isLoading = true
+            mLoadMoreHelper?.curStatus = LoadMoreHelper.STATUS_LOADING
+            onLoadMoreListener?.onLoadMore()
         }
     }
 
@@ -189,6 +223,61 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
         changeItemAnim(animType)
     }
 
+    /**
+     * 判读item是否填充满recyclerView，来决定是否开启加载更多
+     * @return true就是item填满recyclerView，false就不是
+     */
+    fun disableLoadMoreIfNotFill(recyclerView: RecyclerView){
+        isLoadMoreEnable = false
+        val layoutManager = recyclerView.layoutManager
+        var result = true
+        recyclerView.postDelayed({
+            if(layoutManager is LinearLayoutManager){
+                result = (layoutManager.findLastCompletelyVisibleItemPosition() + 1) != itemCount
+            }else if(layoutManager is StaggeredGridLayoutManager){
+                val postions = IntArray(layoutManager.spanCount)
+                layoutManager.findLastCompletelyVisibleItemPositions(postions)
+                var maxPos = Int.MIN_VALUE
+                for(pos in postions){
+                    if(pos > maxPos){
+                        maxPos = pos
+                    }
+                }
+                result = (maxPos + 1) != itemCount
+            }
+            isLoadMoreEnable = result
+        } , 50)
+    }
+
+    /**
+     * 加载更多完成，下次滑到底部时还会触发加载更多逻辑
+     */
+    fun loadingComplete(){
+        if(loadMoreViewCount == 0) return
+        isLoading = false
+        mLoadMoreHelper?.curStatus = LoadMoreHelper.STATUS_LOADING_COMPLETE
+        notifyItemChanged(loadMoreViewPosition)
+    }
+
+    /**
+     * 加载更多结束，下次滑到底部时不会触发加载更多逻辑，但会显示loadingEnd视图
+     */
+    fun loadingEnd(){
+        if(loadMoreViewCount == 0) return
+        isLoading = false
+        mLoadMoreHelper?.curStatus = LoadMoreHelper.STATUS_LOADING_END
+        notifyItemChanged(loadMoreViewPosition)
+    }
+
+    /**
+     * 加载更多失败，下次滑到底部时不会触发加载更多逻辑，但会显示loadingFail视图
+     */
+    fun loadingFail(){
+        if(loadMoreViewCount == 0) return
+        isLoading = false
+        mLoadMoreHelper?.curStatus = LoadMoreHelper.STATUS_LOADING_FAIL
+        notifyItemChanged(loadMoreViewPosition)
+    }
 
     /**
      * 不是同一个引用, 清空列表，重新设置数据源
@@ -383,9 +472,8 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
     interface OnLoadMoreListener{
         /**
          * 加载更多回调方法
-         * @param view 加载更多对应的视图
          */
-        fun onLoadMore(view: View)
+        fun onLoadMore()
     }
 
     /**

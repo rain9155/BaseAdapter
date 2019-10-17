@@ -5,6 +5,20 @@
         android:id="@+id/item_add_datas"
         android:title="Add Datas"/>
 
+    <item android:title="Load More">
+        <menu>
+            <item
+                android:id="@+id/item_load_more"
+                android:title="Disable Load More"/>
+
+            <item
+                android:id="@+id/item_load_more_status"
+                android:title="Load More Status(Complete)"/>
+
+        </menu>
+    </item>
+
+
     <item android:title="HeaderView">
         <menu>
             <item
