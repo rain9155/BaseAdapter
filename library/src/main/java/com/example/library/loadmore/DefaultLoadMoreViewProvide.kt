@@ -8,12 +8,12 @@ import com.example.library.R
  */
 class DefaultLoadMoreViewProvide : ILoadMoreViewProvide{
 
-    override fun getLayoutId(): Int = R.layout.load_more_layout
+    override fun getLoadMoreLayoutId(): Int = R.layout.baseadapter_load_more_layout
 
-    override fun getLoadingViewId(): Int = R.id.loading
+    override fun getLoadingViewId(): Int = R.id.baseadapter_loading
 
-    override fun getLoadingEndViewId(): Int = R.id.loading_end
+    override fun getLoadingEndViewId(): Int = R.id.baseadapter_loading_end
 
-    override fun getLoadingFailViewId(): Int = R.id.loading_fail
+    override fun getLoadingFailViewId(): Int = R.id.baseapadter_loading_fail
 
 }

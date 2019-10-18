@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.example.baseadapter.adapter.DataAdapter;
+import com.example.baseadapter.loadmore.MyLoadMoreProvide;
 import com.example.library.BaseAdapter;
 import com.example.library.loadmore.LoadMoreHelper;
 
@@ -27,12 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private int curLoadMoreStatus = LoadMoreHelper.STATUS_LOADING_COMPLETE;
     private RecyclerView mRecyclerView;
+    private List<String> mDatas = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDataAdapter = new DataAdapter(R.layout.item_data);
+        mDataAdapter = new DataAdapter(mDatas, R.layout.item_data);
         mRecyclerView = findViewById(R.id.recycler_view);
         mDataAdapter.openItemAnim();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -59,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
+        mDataAdapter.disableLoadMoreIfNotFill(mRecyclerView);
+        mDataAdapter.setLoadMoreProvide(new MyLoadMoreProvide());
+        mDataAdapter.addHeaderView(LayoutInflater.from(this).inflate(R.layout.header_view, null));
+        mDataAdapter.addEmptyView(LayoutInflater.from(this).inflate(R.layout.empty_view, null));
     }
 
     @Override
@@ -71,12 +78,19 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.item_add_datas:
-                List<String> datas = new ArrayList<>();
-                getDatas(datas, 30);
-                mDataAdapter.setDatas(datas);
+                getDatas(mDatas, 20);
+                mDataAdapter.setDatas(mDatas);
                 mDataAdapter.disableLoadMoreIfNotFill(mRecyclerView);
                 break;
-            case R.id.item_load_more:
+            case R.id.item_add_data:
+                mDataAdapter.addData("1000");
+                mDataAdapter.disableLoadMoreIfNotFill(mRecyclerView);
+                break;
+            case R.id.item_clear_datas:
+                mDatas.clear();
+                mDataAdapter.notifyDataSetChanged();
+                break;
+            case R.id.item_load_more_enable:
                 isEnableLoadMore = !isEnableLoadMore;
                 if(isEnableLoadMore){
                     mDataAdapter.setLoadMoreEnable(true);

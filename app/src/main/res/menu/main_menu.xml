@@ -5,10 +5,18 @@
         android:id="@+id/item_add_datas"
         android:title="Add Datas"/>
 
+    <item
+        android:id="@+id/item_add_data"
+        android:title="Add a Data"/>
+
+    <item
+        android:id="@+id/item_clear_datas"
+        android:title="clear Datas"/>
+
     <item android:title="Load More">
         <menu>
             <item
-                android:id="@+id/item_load_more"
+                android:id="@+id/item_load_more_enable"
                 android:title="Disable Load More"/>
 
             <item

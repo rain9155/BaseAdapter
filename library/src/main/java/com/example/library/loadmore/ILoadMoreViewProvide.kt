@@ -6,7 +6,7 @@ package com.example.library.loadmore
  */
 interface ILoadMoreViewProvide{
 
-    fun getLayoutId(): Int
+    fun getLoadMoreLayoutId(): Int
     fun getLoadingViewId(): Int
     fun getLoadingEndViewId(): Int
     fun getLoadingFailViewId(): Int

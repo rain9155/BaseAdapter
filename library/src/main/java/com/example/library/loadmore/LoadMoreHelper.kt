@@ -3,12 +3,13 @@ package com.example.library.loadmore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.library.BaseViewHolder
 
 /**
  * 管理LoadMoreView的状态
  * Created by 陈健宇 at 2019/10/16
  */
-class LoadMoreHelper(val parent: ViewGroup){
+class LoadMoreHelper{
 
     companion object {
         const val STATUS_LOADING = 0x000
@@ -17,51 +18,41 @@ class LoadMoreHelper(val parent: ViewGroup){
         const val STATUS_LOADING_COMPLETE = 0x003
     }
 
-    private var loadingView:View
-    private var loadingEndView: View
-    private var loadingFailView: View
-
-    var loadMoreView: View
-    var loadMoreViewProvide: ILoadMoreViewProvide = DefaultLoadMoreViewProvide()
+    private var loadMoreViewProvide: ILoadMoreViewProvide
+    lateinit var loadMoreView: View
     var curStatus = STATUS_LOADING_COMPLETE
 
     init {
-        loadMoreView = LayoutInflater.from(parent.context).inflate(loadMoreViewProvide.getLayoutId(), parent, false)
-        loadingView = loadMoreView.findViewById(loadMoreViewProvide.getLoadingViewId())
-        loadingEndView = loadMoreView.findViewById(loadMoreViewProvide.getLoadingEndViewId())
-        loadingFailView = loadMoreView.findViewById(loadMoreViewProvide.getLoadingFailViewId())
+        loadMoreViewProvide = DefaultLoadMoreViewProvide()
     }
 
-    fun show(){
+    fun show(holder: BaseViewHolder){
         when(curStatus){
             STATUS_LOADING ->{
-                loadingView.visibility = View.VISIBLE
-                loadingEndView.visibility = View.INVISIBLE
-                loadingFailView.visibility = View.INVISIBLE
+                holder.setVisibility(loadMoreViewProvide.getLoadingViewId(), View.VISIBLE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingEndViewId(), View.INVISIBLE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingFailViewId(), View.INVISIBLE)
             }
             STATUS_LOADING_END ->{
-                loadingEndView.visibility = View.VISIBLE
-                loadingView.visibility = View.INVISIBLE
-                loadingFailView.visibility = View.INVISIBLE
+                holder.setVisibility(loadMoreViewProvide.getLoadingEndViewId(), View.VISIBLE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingViewId(), View.INVISIBLE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingFailViewId(), View.INVISIBLE)
             }
             STATUS_LOADING_FAIL ->{
-                loadingFailView.visibility = View.VISIBLE
-                loadingEndView.visibility = View.INVISIBLE
-                loadingView.visibility = View.INVISIBLE
+                holder.setVisibility(loadMoreViewProvide.getLoadingFailViewId(), View.VISIBLE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingEndViewId(), View.INVISIBLE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingViewId(), View.INVISIBLE)
             }
             else -> {
-                loadingFailView.visibility = View.GONE
-                loadingEndView.visibility = View.GONE
-                loadingView.visibility = View.GONE
+                holder.setVisibility(loadMoreViewProvide.getLoadingFailViewId(), View.GONE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingEndViewId(), View.GONE)
+                holder.setVisibility(loadMoreViewProvide.getLoadingViewId(), View.GONE)
             }
         }
     }
 
     fun updateLoadMoreView(parent: ViewGroup){
-        loadMoreView = LayoutInflater.from(parent.context).inflate(loadMoreViewProvide.getLayoutId(), parent, false)
-        loadingView = loadMoreView.findViewById(loadMoreViewProvide.getLoadingViewId())
-        loadingEndView = loadMoreView.findViewById(loadMoreViewProvide.getLoadingEndViewId())
-        loadingFailView = loadMoreView.findViewById(loadMoreViewProvide.getLoadingFailViewId())
+        loadMoreView = LayoutInflater.from(parent.context).inflate(loadMoreViewProvide.getLoadMoreLayoutId(), parent, false)
     }
 
     fun updateLoadMoreProvide(provide: ILoadMoreViewProvide){
