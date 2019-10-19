@@ -1,6 +1,6 @@
 # BaseAdapter
 
-[ ![Download](https://api.bintray.com/packages/rain9155/jianyu/baseadapter/images/download.svg) ](https://bintray.com/rain9155/jianyu/baseadapter/_latestVersion)](https://bintray.com/rain9155/jianyu/baseadapter/_latestVersion)
+[![Download](https://api.bintray.com/packages/rain9155/jianyu/baseadapter/images/download.svg)](https://bintray.com/rain9155/jianyu/baseadapter/_latestVersion)
 
 封装RecyclerView的Adapter，减少Adapter重复代码的编写，支持多种类型的itemType、自动加载更多、添加emptyView和添加headerView。
 
@@ -13,6 +13,8 @@ RecyclerView已经成为了Android开发中列表控件的首选，它可以取�
 你会发现自动加载更多、添加emptyView和添加headerView都是属于多itemType的一种，所以归根到底就是多itemType的封装，对于多itemType的封装，我使用了[AdapterDelegates](https://github.com/sockeqwe/AdapterDelegates)中使用的方式，这位作者在这篇文章[create adapter hell escape](http://hannesdorfmann.com/android/adapter-delegates)中讲解了这种方式的原理，使用一个[Manager](https://github.com/rain9155/BaseAdapter/blob/master/library/src/main/java/com/example/library/multiple/MultiItemDelegateManager.kt)管理所有itemType的Delegate，用户通过对[Delegate](https://github.com/rain9155/BaseAdapter/blob/master/library/src/main/java/com/example/library/multiple/IMultiItemDelegate.kt)接口方法的不同实现，让外部来创建和绑定不同的itemType的ViewHolder，并且通过isForViewType这个方法的返回值true或false来决定这个item是否使用数据源中的这个position来在RecyclerView中的相应位置来展示自己，然后原本的Adapter中把 create和bind ViewHolder的任务都**委托**给了Manager来实现，因为Manager中持有所有用户添加的Delegate，Delegate会根据itemType来创建和绑定相应的ViewHolder。
 
 ## PreView
+
+![adapter](/screenshots/adapter.gif)
 
 其中头部绿色显示的是添加的HeaderView，接下来是数据源，一种颜色代表着一个itemType，拉到底部就会触发自动加载更多，最后清空数据后显示一个emptyView。
 
