@@ -11,15 +11,18 @@ import java.util.List;
 /**
  * Created by 陈健宇 at 2019/7/9
  */
-public class DataAdapter extends BaseAdapter<String>{
+public class DataAdapter extends BaseAdapter<String> {
 
-    public DataAdapter(int layoutId) {
-        super(layoutId);
-        addItemAdapterDelegte(new MutipleItem2()).addItemAdapterDelegte(new MultipleItem1());
+    public DataAdapter(List<String> datas, int layoutId) {
+        super(datas, layoutId);
+        addItemDelegate(new MutipleItem2()).addItemDelegate(new MultipleItem1());
+
     }
 
     @Override
     protected void onBindView(BaseViewHolder holder, String item) {
         holder.setText(R.id.tv_text, item);
     }
+
+
 }

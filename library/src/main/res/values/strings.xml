@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">library</string>
+
+    <string name="empty_view">没有数据哦！</string>
+    <string name="loadMore_loading">加载中…</string>
+    <string name="loadMore_loading_end">没有更多数据</string>
+    <string name="loadMore_loading_fail">加载失败</string>
+
 </resources>
