@@ -1,5 +1,4 @@
 
-
 封装RecyclerView的Adapter，减少Adapter重复代码的编写，支持多种类型的itemType、自动加载更多、添加空视图。
 
 ## Pre
@@ -25,4 +24,3 @@ RecyclerView已经成为了Android开发中列表控件的首选，它可以取�
 ## How to install？
 
 ## How to use？
-
