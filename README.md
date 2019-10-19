@@ -2,7 +2,7 @@
 
 [![Download](https://api.bintray.com/packages/rain9155/jianyu/baseadapter/images/download.svg)](https://bintray.com/rain9155/jianyu/baseadapter/_latestVersion)
 
-封装RecyclerView的Adapter，减少Adapter重复代码的编写，支持多种类型的itemType、自动加载更多、添加emptyView和添加headerView。
+### 封装RecyclerView的Adapter，减少Adapter重复代码的编写，支持多种类型的itemType、自动加载更多、添加emptyView和添加headerView。
 
 ## Pre
 
