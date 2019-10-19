@@ -103,6 +103,7 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
         addItemDelegate(TYPE_BASE, BaseDelegate())
                 .addItemDelegate(TYPE_HEADER_VIEW, HeaderDelegate())
                 .addItemDelegate(TYPE_LOAD_MORE_VIEW, LoadMoreDelegate())
+                .addItemDelegate(TYPE_EMPTY_VIEW, EmptyViewDelegate())
     }
 
     constructor(datas : MutableList<T>) : this(datas, 0)
