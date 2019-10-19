@@ -1,5 +1,6 @@
 package com.example.baseadapter;
 
+import android.animation.ObjectAnimator;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,9 @@ import android.view.View;
 import com.example.baseadapter.adapter.DataAdapter;
 import com.example.baseadapter.loadmore.MyLoadMoreProvide;
 import com.example.library.BaseAdapter;
+import com.example.library.anim.AlphaAnim;
+import com.example.library.anim.IAnim;
+import com.example.library.config.Constant;
 import com.example.library.loadmore.LoadMoreHelper;
 
 import java.util.ArrayList;
