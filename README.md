@@ -1,7 +1,5 @@
 # BaseAdapter
 
-[![Download](https://api.bintray.com/packages/rain9155/jianyu/baseadapter/images/download.svg)](https://bintray.com/rain9155/jianyu/baseadapter/_latestVersion)
-
 ### 封装RecyclerView的Adapter，减少Adapter重复代码的编写，支持多种类型的itemType、自动加载更多、添加emptyView和添加headerView。
 
 ## Pre
@@ -20,10 +18,19 @@ RecyclerView已经成为了Android开发中列表控件的首选，它可以取�
 
 ## How to install？
 
+在项目根目录的build.gradle下添加仓库地址：
+
+```
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+```
 在app目录下的build.grade下添加：
 
 ```
-implementation 'com.jianyu:baseadapter:1.0.2'
+implementation 'io.github.rain9155:baseadapter:1.0.3'
 ```
 
 ## How to use？
