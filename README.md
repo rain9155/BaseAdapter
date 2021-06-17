@@ -20,7 +20,7 @@ RecyclerView已经成为了Android开发中列表控件的首选，它可以取�
 
 在项目根目录的build.gradle下添加仓库地址：
 
-```
+```groovy
 allprojects {
     repositories {
         mavenCentral()
@@ -29,7 +29,7 @@ allprojects {
 ```
 在app目录下的build.grade下添加：
 
-```
+```groovy
 implementation 'io.github.rain9155:baseadapter:1.0.3'
 ```
 
