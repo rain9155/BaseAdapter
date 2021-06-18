@@ -1,18 +1,13 @@
 package com.example.library
 
-import android.support.annotation.IntRange
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
-import android.util.Log
+import androidx.annotation.IntRange
+import androidx.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-
-
+import androidx.recyclerview.widget.RecyclerView
 import com.example.library.anim.AlphaAnim
 import com.example.library.anim.ScaleAnim
 import com.example.library.anim.IAnim
@@ -256,9 +251,9 @@ open class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder> {
         val layoutManager = recyclerView.layoutManager
         var result = true
         recyclerView.postDelayed({
-            if(layoutManager is LinearLayoutManager){
+            if(layoutManager is androidx.recyclerview.widget.LinearLayoutManager){
                 result = (layoutManager.findLastCompletelyVisibleItemPosition() + 1) != itemCount
-            }else if(layoutManager is StaggeredGridLayoutManager){
+            }else if(layoutManager is androidx.recyclerview.widget.StaggeredGridLayoutManager){
                 val postions = IntArray(layoutManager.spanCount)
                 layoutManager.findLastCompletelyVisibleItemPositions(postions)
                 var maxPos = Int.MIN_VALUE

@@ -3,7 +3,6 @@ package com.example.library.anim
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.view.View
 
 import com.example.library.config.Constant
@@ -19,7 +18,6 @@ class ScaleAnim : IAnim {
         val animatorSet = AnimatorSet()
         animatorSet.run {
             duration = Constant.ITEM_ANIM_TIME.toLong()
-            interpolator = LinearOutSlowInInterpolator()
             playTogether(scaleAnimationX, scaleAnimationY)
             start()
         }

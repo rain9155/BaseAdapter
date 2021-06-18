@@ -1,6 +1,6 @@
 package com.example.library.antation
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import com.example.library.BaseAdapter.Companion.ANIM_ALPHA
 import com.example.library.BaseAdapter.Companion.ANIM_SCALE
 import com.example.library.BaseAdapter.Companion.ANIM_SLIDE_FROM_LEFT

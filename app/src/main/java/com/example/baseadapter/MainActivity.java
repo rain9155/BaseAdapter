@@ -1,12 +1,11 @@
 package com.example.baseadapter;
 
-import android.animation.ObjectAnimator;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -87,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
                 mDataAdapter.disableLoadMoreIfNotFill(mRecyclerView);
                 break;
             case R.id.item_add_data:
-                mDataAdapter.addData("1000");
+                mDatas.add("1000");
+                mDataAdapter.notifyDataSetChanged();
                 mDataAdapter.disableLoadMoreIfNotFill(mRecyclerView);
                 break;
             case R.id.item_clear_datas:
