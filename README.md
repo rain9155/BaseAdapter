@@ -30,7 +30,7 @@ allprojects {
 在app目录下的build.grade下添加：
 
 ```groovy
-implementation 'io.github.rain9155:baseadapter:1.0.3'
+implementation 'io.github.rain9155:baseadapter:1.0.4'
 ```
 
 ## How to use？
